@@ -4,6 +4,7 @@
 # shellcheck disable=SC1091
 . ../../lib/sh-test-lib
 OUTPUT="$(pwd)/output"
+DATA_DIR="$(pwd)/../../../data"
 RESULT_FILE="${OUTPUT}/result.txt"
 LOGFILE="${OUTPUT}/kselftest.txt"
 TESTPROG="kselftest_armhf.tar.gz"
@@ -132,7 +133,8 @@ create_out_dir "${OUTPUT}"
 # shellcheck disable=SC2164
 cd "${OUTPUT}"
 
-install
+#install
+echo "skipped install"
 
 if [ -d "${KSELFTEST_PATH}" ]; then
     echo "kselftests found on rootfs"
@@ -141,12 +143,16 @@ if [ -d "${KSELFTEST_PATH}" ]; then
 else
     if [ -n "${TESTPROG_URL}" ]; then
       # Download kselftest tarball from given URL
+      echo "Trying to fetch tests from online"
       wget "${TESTPROG_URL}" -O kselftest.tar.gz
     elif [ -n "${TESTPROG}" ]; then
       # Download and extract kselftest tarball.
-      wget http://testdata.validation.linaro.org/tests/kselftest/"${TESTPROG}" -O kselftest.tar.gz
+      #wget http://testdata.validation.linaro.org/tests/kselftest/"${TESTPROG}" -O kselftest.tar.gz
+      echo "cp ${DATA_DIR}/${TESTPROG} ./"
+      cp "${DATA_DIR}"/"${TESTPROG}" ./
     fi
-    tar xf "kselftest.tar.gz"
+    echo "tar -x ${TESTPROG}"
+    tar -zxvf "${TESTPROG}"
     # shellcheck disable=SC2164
     cd "kselftest"
 fi
